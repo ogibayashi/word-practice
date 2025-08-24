@@ -4,6 +4,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Prisma seed設定
+// pnpm db:seed コマンドで実行
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")

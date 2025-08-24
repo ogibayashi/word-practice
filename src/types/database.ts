@@ -46,6 +46,35 @@ export interface SessionStats {
 	accuracy: number;
 }
 
+// セッション作成リクエスト
+export interface CreateSessionRequest {
+	userId: string;
+	totalQuestions?: number;
+}
+
+// セッション作成レスポンス  
+export interface CreateSessionResponse {
+	sessionId: string;
+	totalQuestions: number;
+	questions: QuestionData[];
+}
+
+// セッション回答リクエスト
+export interface SubmitAnswerRequest {
+	questionId: string;
+	userAnswer: string;
+}
+
+// セッション回答レスポンス
+export interface SubmitAnswerResponse {
+	isCorrect: boolean;
+	correctAnswers: string[];
+	userAnswer: string;
+	synonyms: string[];
+	completedQuestions: number;
+	totalQuestions: number;
+}
+
 // 学習履歴集計用の型
 export interface WordStats {
 	wordId: string;
