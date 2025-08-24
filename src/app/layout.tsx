@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "English Word Practice",
-  description: "Learn English words efficiently with spaced repetition",
+  title: "英単語練習アプリ",
+  description: "効率的な英単語学習アプリ - 日本語から英単語を入力する形式",
 };
 
 export default function RootLayout({
@@ -17,11 +17,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={inter.className}>
-        <div className="min-h-screen bg-background">
-          <main className="container mx-auto px-4 py-8">
-            {children}
-          </main>
-        </div>
+        {children}
       </body>
     </html>
   );

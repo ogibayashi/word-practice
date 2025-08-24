@@ -1,0 +1,93 @@
+// Prisma schema file for English word learning app
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザー管理
+model User {
+  id           String  @id @default(cuid())
+  lineUserId   String? @unique @map("line_user_id") // LINE User ID
+  displayName  String  @map("display_name") @db.VarChar(100)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // リレーション
+  sessions        Session[]
+  learningHistory LearningHistory[]
+
+  @@map("users")
+}
+
+// 単語マスタ
+model Word {
+  id              String  @id @default(cuid())
+  japaneseMeaning String  @map("japanese_meaning") @db.Text
+  synonyms        String[] // 類義語リスト
+  difficultyLevel Int     @default(1) @map("difficulty_level") // 難易度（将来拡張用）
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // リレーション
+  answers         WordAnswer[]
+  learningHistory LearningHistory[]
+
+  @@map("words")
+}
+
+// 正解候補
+model WordAnswer {
+  id        String  @id @default(cuid())
+  wordId    String  @map("word_id")
+  answer    String  @db.VarChar(255) // 英単語正解候補
+  isPrimary Boolean @default(false) @map("is_primary") // 主要な答えかどうか
+
+  // リレーション
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@map("word_answers")
+}
+
+// 学習セッション
+model Session {
+  id                 String    @id @default(cuid())
+  userId             String    @map("user_id")
+  totalQuestions     Int       @default(10) @map("total_questions")
+  completedQuestions Int       @default(0) @map("completed_questions")
+  isCompleted        Boolean   @default(false) @map("is_completed")
+  startedAt          DateTime  @default(now()) @map("started_at")
+  completedAt        DateTime? @map("completed_at")
+
+  // リレーション
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  learningHistory LearningHistory[]
+
+  @@map("sessions")
+}
+
+// 学習履歴
+model LearningHistory {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  wordId     String   @map("word_id")
+  sessionId  String   @map("session_id")
+  isCorrect  Boolean  @map("is_correct") // 正解・不正解
+  userAnswer String?  @map("user_answer") @db.Text // ユーザーの回答
+  answeredAt DateTime @default(now()) @map("answered_at")
+
+  // リレーション
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word    Word    @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("learning_history")
+}
+
+// パフォーマンス向上用インデックス
+// @@index([userId, wordId], map: "idx_learning_history_user_word")
+// @@index([sessionId], map: "idx_learning_history_session")
+// これらはマイグレーション時に手動で追加
