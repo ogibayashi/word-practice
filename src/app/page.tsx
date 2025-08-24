@@ -28,7 +28,7 @@ export default function HomePage() {
                 <Link href="/learn">学習を開始</Link>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link href="/stats">統計を見る</Link>
+                <Link href={"/stats" as any}>統計を見る</Link>
               </Button>
             </>
           ) : (

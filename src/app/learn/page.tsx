@@ -74,16 +74,16 @@ export default function LearnPage() {
       }
 
       const sessionResult = await sessionResponse.json();
-      
+
       if (!sessionResult.success || !sessionResult.data) {
         throw new Error(sessionResult.error || "セッションデータの取得に失敗しました");
       }
-      
+
       const sessionData = sessionResult.data;
-      setSession({ 
+      setSession({
         id: sessionData.sessionId,
         questions: sessionData.questions,
-        currentQuestionIndex: 0
+        currentQuestionIndex: 0,
       });
 
       // セッションの最初の問題を表示
@@ -101,28 +101,33 @@ export default function LearnPage() {
       alert("全ての問題が完了しました！");
       return;
     }
-    
+
     const question = questions[index];
+    if (!question) {
+      console.error("Question not found at index:", index);
+      return;
+    }
+
     const word = {
       id: question.id,
       japanese: question.japaneseMeaning,
       partOfSpeech: null,
       example: null,
     };
-    
+
     setCurrentWord(word);
     setAnswer("");
   };
 
   const moveToNextQuestion = () => {
     if (!session) return;
-    
+
     const nextIndex = session.currentQuestionIndex + 1;
     if (nextIndex >= session.questions.length) {
       alert("全ての問題が完了しました！");
       return;
     }
-    
+
     const updatedSession = {
       ...session,
       currentQuestionIndex: nextIndex,
@@ -155,11 +160,11 @@ export default function LearnPage() {
       }
 
       const result = await response.json();
-      
+
       if (!result.success || !result.data) {
         throw new Error(result.error || "回答処理に失敗しました");
       }
-      
+
       const answerData = result.data;
 
       // 結果を表示（今後結果画面に移行）

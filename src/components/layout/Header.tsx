@@ -24,7 +24,7 @@ export function Header() {
                 学習
               </Link>
               <Link
-                href="/stats"
+                href={"/stats" as any}
                 className="text-sm font-medium text-muted-foreground hover:text-foreground"
               >
                 統計
