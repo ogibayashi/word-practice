@@ -33,7 +33,7 @@ describe("/api/sessions/[id]/answer", () => {
 
     // リクエストボディを準備
     const requestBody = {
-      questionId: "question-123",
+      wordId: "question-123",
       userAnswer: "run",
     };
 
@@ -46,7 +46,7 @@ describe("/api/sessions/[id]/answer", () => {
     });
 
     // パラメータをモック
-    const params = { params: { id: "session-123" } };
+    const params = { params: Promise.resolve({ id: "session-123" }) };
 
     const response = await POST(request, params);
     const data = await response.json();
@@ -75,7 +75,7 @@ describe("/api/sessions/[id]/answer", () => {
     mockSubmitMockAnswer.mockReturnValue(mockAnswerResponse);
 
     const requestBody = {
-      questionId: "question-123",
+      wordId: "question-123",
       userAnswer: "walk",
     };
 
@@ -87,7 +87,7 @@ describe("/api/sessions/[id]/answer", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const params = { params: { id: "session-123" } };
+    const params = { params: Promise.resolve({ id: "session-123" }) };
 
     const response = await POST(request, params);
     const data = await response.json();
@@ -102,7 +102,7 @@ describe("/api/sessions/[id]/answer", () => {
     mockSubmitMockAnswer.mockReturnValue(null);
 
     const requestBody = {
-      questionId: "question-123",
+      wordId: "question-123",
       userAnswer: "run",
     };
 
@@ -114,7 +114,7 @@ describe("/api/sessions/[id]/answer", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const params = { params: { id: "invalid-session" } };
+    const params = { params: Promise.resolve({ id: "invalid-session" }) };
 
     const response = await POST(request, params);
     const data = await response.json();
@@ -124,7 +124,7 @@ describe("/api/sessions/[id]/answer", () => {
     expect(data.error).toBe("セッションまたは問題が見つかりません");
   });
 
-  it("questionIdが未指定の場合は400エラーを返す", async () => {
+  it("wordIdが未指定の場合は400エラーを返す", async () => {
     const requestBody = {
       userAnswer: "run",
     };
@@ -137,7 +137,7 @@ describe("/api/sessions/[id]/answer", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const params = { params: { id: "session-123" } };
+    const params = { params: Promise.resolve({ id: "session-123" }) };
 
     const response = await POST(request, params);
     const data = await response.json();
@@ -149,7 +149,7 @@ describe("/api/sessions/[id]/answer", () => {
 
   it("userAnswerが未指定の場合は400エラーを返す", async () => {
     const requestBody = {
-      questionId: "question-123",
+      wordId: "question-123",
     };
 
     const request = new NextRequest("http://localhost:3000/api/sessions/session-123/answer", {
@@ -160,7 +160,7 @@ describe("/api/sessions/[id]/answer", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const params = { params: { id: "session-123" } };
+    const params = { params: Promise.resolve({ id: "session-123" }) };
 
     const response = await POST(request, params);
     const data = await response.json();
@@ -179,7 +179,7 @@ describe("/api/sessions/[id]/answer", () => {
       body: "無効なJSON",
     });
 
-    const params = { params: { id: "session-123" } };
+    const params = { params: Promise.resolve({ id: "session-123" }) };
 
     const response = await POST(request, params);
     const data = await response.json();
@@ -195,7 +195,7 @@ describe("/api/sessions/[id]/answer", () => {
     });
 
     const requestBody = {
-      questionId: "question-123",
+      wordId: "question-123",
       userAnswer: "run",
     };
 
@@ -207,7 +207,7 @@ describe("/api/sessions/[id]/answer", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const params = { params: { id: "session-123" } };
+    const params = { params: Promise.resolve({ id: "session-123" }) };
 
     const response = await POST(request, params);
     const data = await response.json();

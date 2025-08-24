@@ -12,7 +12,7 @@ export async function isDatabaseConnected(): Promise<boolean> {
     await prisma.$executeRaw`SELECT 1`;
     return true;
   } catch (error) {
-    console.warn("Database connection failed, falling back to mock data:", error);
+    console.warn("Database connection failed, falling back to mock data:", String(error));
     return false;
   }
 }

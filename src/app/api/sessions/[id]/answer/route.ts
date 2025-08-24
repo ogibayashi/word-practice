@@ -5,7 +5,7 @@ import { z } from "zod";
 
 // リクエストボディのバリデーション
 const SubmitAnswerSchema = z.object({
-  questionId: z.string().min(1, "問題IDが必要です"),
+  wordId: z.string().min(1, "単語IDが必要です"),
   userAnswer: z.string().min(1, "回答を入力してください"),
 });
 
@@ -37,11 +37,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       );
     }
 
-    const { questionId, userAnswer } = validation.data;
+    const { wordId, userAnswer } = validation.data;
 
     // TODO: データベースが利用可能な場合はデータベース版を使用
     // 現在はモック版を使用
-    const result = submitMockAnswer(id, questionId, userAnswer);
+    const result = submitMockAnswer(id, wordId, userAnswer);
 
     if (!result) {
       return NextResponse.json<ApiResponse>(
