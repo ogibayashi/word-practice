@@ -1,6 +1,7 @@
 "use client";
 
 import { AnswerResult } from "@/components/features/AnswerResult";
+import { ErrorDialog } from "@/components/features/ErrorDialog";
 import { SessionComplete } from "@/components/features/SessionComplete";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,6 +46,12 @@ interface AnswerResultData {
   japaneseMeaning: string;
 }
 
+interface ErrorData {
+  title: string;
+  message: string;
+  actionLabel?: string;
+}
+
 export default function LearnPage() {
   const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -54,6 +61,8 @@ export default function LearnPage() {
   const [showResult, setShowResult] = useState(false);
   const [resultData, setResultData] = useState<AnswerResultData | null>(null);
   const [showComplete, setShowComplete] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorData, setErrorData] = useState<ErrorData | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
   const router = useRouter();
 
@@ -103,7 +112,12 @@ export default function LearnPage() {
       showCurrentQuestion(sessionData.questions, 0);
     } catch (error) {
       console.error("セッション初期化エラー:", error);
-      alert("学習セッションの開始に失敗しました");
+      setErrorData({
+        title: "エラー",
+        message: "学習セッションの開始に失敗しました",
+        actionLabel: "再試行",
+      });
+      setShowError(true);
     } finally {
       setIsLoading(false);
     }
@@ -195,7 +209,12 @@ export default function LearnPage() {
       setShowResult(true);
     } catch (error) {
       console.error("回答送信エラー:", error);
-      alert("回答の送信に失敗しました");
+      setErrorData({
+        title: "エラー",
+        message: "回答の送信に失敗しました",
+        actionLabel: "再試行",
+      });
+      setShowError(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -220,6 +239,17 @@ export default function LearnPage() {
 
   const handleGoHome = () => {
     router.push("/");
+  };
+
+  const handleErrorClose = () => {
+    setShowError(false);
+    setErrorData(null);
+  };
+
+  const handleErrorAction = () => {
+    setShowError(false);
+    setErrorData(null);
+    initializeSession();
   };
 
   if (isLoading) {
@@ -339,6 +369,17 @@ export default function LearnPage() {
           correctCount={correctCount}
           onRestart={handleRestartSession}
           onHome={handleGoHome}
+        />
+      )}
+
+      {/* エラーダイアログ */}
+      {showError && errorData && (
+        <ErrorDialog
+          title={errorData.title}
+          message={errorData.message}
+          onClose={handleErrorClose}
+          actionLabel={errorData.actionLabel}
+          onAction={errorData.actionLabel ? handleErrorAction : undefined}
         />
       )}
     </div>

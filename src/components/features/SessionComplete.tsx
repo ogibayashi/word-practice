@@ -17,33 +17,46 @@ export function SessionComplete({
   onRestart,
   onHome,
 }: SessionCompleteProps) {
-  const accuracy = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+  // Defensive error handling
+  const safeTotal = Math.max(totalQuestions, 0);
+  const safeCorrect = Math.max(Math.min(correctCount, safeTotal), 0);
+  const accuracy = safeTotal > 0 ? Math.round((safeCorrect / safeTotal) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      role="dialog"
+      aria-labelledby="session-complete-title"
+      aria-describedby="session-complete-description"
+    >
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center flex items-center justify-center gap-2">
+          <CardTitle
+            id="session-complete-title"
+            className="text-center flex items-center justify-center gap-2"
+          >
             <Trophy className="text-yellow-500" size={32} />
             <span className="text-gray-800">学習完了！</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="text-center">
-            <p className="text-lg text-gray-600 mb-4">お疲れさまでした！</p>
+            <p id="session-complete-description" className="text-lg text-gray-600 mb-4">
+              お疲れさまでした！
+            </p>
           </div>
 
           <div className="space-y-3">
             <div className="bg-blue-50 p-4 rounded-lg text-center">
               <p className="text-sm text-gray-600 mb-1">総問題数</p>
-              <p className="text-2xl font-bold text-blue-600">{totalQuestions}</p>
+              <p className="text-2xl font-bold text-blue-600">{safeTotal}</p>
             </div>
 
-            {correctCount > 0 && (
+            {safeCorrect > 0 && (
               <>
                 <div className="bg-green-50 p-4 rounded-lg text-center">
                   <p className="text-sm text-gray-600 mb-1">正解数</p>
-                  <p className="text-2xl font-bold text-green-600">{correctCount}</p>
+                  <p className="text-2xl font-bold text-green-600">{safeCorrect}</p>
                 </div>
 
                 <div className="bg-purple-50 p-4 rounded-lg text-center">

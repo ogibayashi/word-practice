@@ -21,11 +21,23 @@ export function AnswerResult({
   onNext,
   isLastQuestion = false,
 }: AnswerResultProps) {
+  // Defensive error handling
+  const safeUserAnswer = userAnswer?.trim() || "";
+  const safeCorrectAnswers = Array.isArray(correctAnswers) ? correctAnswers.filter(Boolean) : [];
+  const safeJapaneseMeaning = japaneseMeaning?.trim() || "";
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      role="dialog"
+      aria-labelledby="answer-result-title"
+      aria-describedby="answer-result-description"
+    >
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center flex items-center justify-center gap-2">
+          <CardTitle
+            id="answer-result-title"
+            className="text-center flex items-center justify-center gap-2"
+          >
             {isCorrect ? (
               <>
                 <CheckCircle className="text-green-500" size={32} />
@@ -41,30 +53,32 @@ export function AnswerResult({
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-center">
-            <p className="text-lg font-medium text-gray-700 mb-2">{japaneseMeaning}</p>
+            <p id="answer-result-description" className="text-lg font-medium text-gray-700 mb-2">
+              {safeJapaneseMeaning}
+            </p>
           </div>
 
           <div className="space-y-3">
             <div className="bg-gray-50 p-3 rounded-lg">
               <p className="text-sm text-gray-600 mb-1">あなたの回答</p>
               <p className={`font-medium ${isCorrect ? "text-green-600" : "text-red-600"}`}>
-                {userAnswer}
+                {safeUserAnswer}
               </p>
             </div>
 
             {!isCorrect && (
               <div className="bg-green-50 p-3 rounded-lg">
                 <p className="text-sm text-gray-600 mb-1">正解</p>
-                <p className="font-medium text-green-600">{correctAnswers.join(", ")}</p>
+                <p className="font-medium text-green-600">{safeCorrectAnswers.join(", ")}</p>
               </div>
             )}
 
-            {isCorrect && correctAnswers.length > 1 && (
+            {isCorrect && safeCorrectAnswers.length > 1 && (
               <div className="bg-blue-50 p-3 rounded-lg">
                 <p className="text-sm text-gray-600 mb-1">他の正解</p>
                 <p className="font-medium text-blue-600">
-                  {correctAnswers
-                    .filter((answer) => answer.toLowerCase() !== userAnswer.toLowerCase())
+                  {safeCorrectAnswers
+                    .filter((answer) => answer.toLowerCase() !== safeUserAnswer.toLowerCase())
                     .join(", ")}
                 </p>
               </div>
