@@ -7,13 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "node_modules/**",
-      ".next/**",
-      "dist/**",
-      "build/**",
-      "*.config.js"
-    ]
+    "ignore": ["node_modules/**", ".next/**", "dist/**", "build/**", "*.config.js"]
   },
   "formatter": {
     "enabled": true,
@@ -42,9 +36,6 @@
       "trailingCommas": "es5",
       "quoteStyle": "double"
     }
-  },
-  "typescript": {
-    "enabled": true
   },
   "json": {
     "formatter": {

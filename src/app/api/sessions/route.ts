@@ -1,10 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createMockSession } from "@/lib/db/mockSession";
-import type { 
-  ApiResponse, 
-  CreateSessionRequest, 
-  CreateSessionResponse 
-} from "@/types/database";
+import type { ApiResponse, CreateSessionRequest, CreateSessionResponse } from "@/types/database";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 // リクエストボディのバリデーション
@@ -20,10 +16,13 @@ export async function POST(request: NextRequest) {
     const validation = CreateSessionSchema.safeParse(body);
 
     if (!validation.success) {
-      return NextResponse.json<ApiResponse>({
-        success: false,
-        error: validation.error.errors[0]?.message || "無効なリクエストです",
-      }, { status: 400 });
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          error: validation.error.errors[0]?.message || "無効なリクエストです",
+        },
+        { status: 400 }
+      );
     }
 
     const { userId, totalQuestions } = validation.data;
@@ -37,13 +36,15 @@ export async function POST(request: NextRequest) {
       data: sessionResponse,
       message: `${totalQuestions}問のセッションを作成しました`,
     });
-
   } catch (error) {
     console.error("Failed to create session:", error);
 
-    return NextResponse.json<ApiResponse>({
-      success: false,
-      error: "セッションの作成に失敗しました",
-    }, { status: 500 });
+    return NextResponse.json<ApiResponse>(
+      {
+        success: false,
+        error: "セッションの作成に失敗しました",
+      },
+      { status: 500 }
+    );
   }
 }

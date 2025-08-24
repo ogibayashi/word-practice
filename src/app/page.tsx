@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
+import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MainLayout } from "@/components/layout/MainLayout";
 import { useAuth } from "@/hooks/useAuth";
+import Link from "next/link";
 
 export default function HomePage() {
   const { isLoggedIn, user } = useAuth();
@@ -13,17 +13,14 @@ export default function HomePage() {
     <MainLayout className="container mx-auto px-4 py-8">
       <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-6">
         <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight">
-            英単語練習アプリ
-          </h1>
+          <h1 className="text-4xl font-bold tracking-tight">英単語練習アプリ</h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            {isLoggedIn && user 
+            {isLoggedIn && user
               ? `${user.displayName}さん、今日も頑張りましょう！`
-              : "日本語から英単語を入力する形式で効率的に学習しましょう"
-            }
+              : "日本語から英単語を入力する形式で効率的に学習しましょう"}
           </p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-4">
           {isLoggedIn ? (
             <>
@@ -59,7 +56,7 @@ export default function HomePage() {
               <p className="text-sm">• 学習履歴で進捗管理</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>学習アルゴリズム</CardTitle>

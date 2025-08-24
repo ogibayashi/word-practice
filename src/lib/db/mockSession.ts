@@ -1,27 +1,26 @@
 // モックセッション管理
 
-import type { 
-  QuestionData, 
-  CreateSessionResponse, 
-  SubmitAnswerResponse
-} from "@/types/database";
-import { getRandomMockWords, checkMockAnswer } from "./mockData";
+import type { CreateSessionResponse, QuestionData, SubmitAnswerResponse } from "@/types/database";
+import { checkMockAnswer, getRandomMockWords } from "./mockData";
 
 // インメモリセッションストレージ
-const sessionStorage = new Map<string, {
-  id: string;
-  userId: string;
-  questions: QuestionData[];
-  totalQuestions: number;
-  completedQuestions: number;
-  answers: Array<{
-    questionId: string;
-    userAnswer: string;
-    isCorrect: boolean;
-  }>;
-  isCompleted: boolean;
-  createdAt: Date;
-}>();
+const sessionStorage = new Map<
+  string,
+  {
+    id: string;
+    userId: string;
+    questions: QuestionData[];
+    totalQuestions: number;
+    completedQuestions: number;
+    answers: Array<{
+      questionId: string;
+      userAnswer: string;
+      isCorrect: boolean;
+    }>;
+    isCompleted: boolean;
+    createdAt: Date;
+  }
+>();
 
 // セッションID生成
 function generateSessionId(): string {
@@ -29,10 +28,7 @@ function generateSessionId(): string {
 }
 
 // セッション作成
-export function createMockSession(
-  userId: string, 
-  totalQuestions: number = 10
-): CreateSessionResponse {
+export function createMockSession(userId: string, totalQuestions = 10): CreateSessionResponse {
   const sessionId = generateSessionId();
   const questions = getRandomMockWords(totalQuestions);
 
@@ -71,11 +67,11 @@ export function submitMockAnswer(
   if (!session) return null;
 
   // 問題を検索
-  const question = session.questions.find(q => q.id === questionId);
+  const question = session.questions.find((q) => q.id === questionId);
   if (!question) return null;
 
   // 重複回答チェック
-  const existingAnswer = session.answers.find(a => a.questionId === questionId);
+  const existingAnswer = session.answers.find((a) => a.questionId === questionId);
   if (existingAnswer) return null;
 
   // 回答チェック
@@ -110,8 +106,8 @@ export function getMockSessionStats(sessionId: string) {
   const session = sessionStorage.get(sessionId);
   if (!session) return null;
 
-  const correctAnswers = session.answers.filter(a => a.isCorrect).length;
-  const incorrectAnswers = session.answers.filter(a => !a.isCorrect).length;
+  const correctAnswers = session.answers.filter((a) => a.isCorrect).length;
+  const incorrectAnswers = session.answers.filter((a) => !a.isCorrect).length;
   const accuracy = session.answers.length > 0 ? correctAnswers / session.answers.length : 0;
 
   return {
