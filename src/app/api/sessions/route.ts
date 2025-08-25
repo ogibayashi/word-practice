@@ -1,9 +1,5 @@
 import { sessionService } from "@/lib/services/sessionService";
-import type {
-  ApiResponse,
-  CreateSessionRequest,
-  CreateSessionResponse,
-} from "@/types/database";
+import type { ApiResponse, CreateSessionRequest, CreateSessionResponse } from "@/types/database";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -45,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     // サービス層でセッション作成（フォールバック機能付き）
     const sessionResponse = await sessionService.createSession(userId, totalQuestions);
-    
+
     return NextResponse.json<ApiResponse<CreateSessionResponse>>({
       success: true,
       data: sessionResponse,
@@ -63,4 +59,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

@@ -1,7 +1,7 @@
-import type { CreateSessionResponse, QuestionData } from "@/types/database";
 import { prisma } from "@/lib/db/client";
 import { createMockSession } from "@/lib/db/mockSession";
-import { userQueries, sessionQueries } from "@/lib/db/queries";
+import { sessionQueries, userQueries } from "@/lib/db/queries";
+import type { CreateSessionResponse, QuestionData } from "@/types/database";
 
 /**
  * セッション管理サービス
@@ -118,12 +118,14 @@ export class SessionService {
     );
 
     // QuestionData形式に変換
-    return words.map((word): QuestionData => ({
-      id: word.id,
-      japaneseMeaning: word.japaneseMeaning,
-      answers: answersByWordId[word.id]?.map((answer) => answer.answer) || [],
-      synonyms: word.synonyms || [],
-    }));
+    return words.map(
+      (word): QuestionData => ({
+        id: word.id,
+        japaneseMeaning: word.japaneseMeaning,
+        answers: answersByWordId[word.id]?.map((answer) => answer.answer) || [],
+        synonyms: word.synonyms || [],
+      })
+    );
   }
 }
 
