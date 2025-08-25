@@ -96,7 +96,7 @@ export async function GET(request: NextRequest, context: { params: Promise<Route
     // 単語別の学習進捗を処理
     const wordStats = new Map<string, { correct: number; incorrect: number; total: number }>();
 
-    wordProgress.forEach((item: any) => {
+    wordProgress.forEach((item) => {
       const wordId = item.wordId;
       if (!wordStats.has(wordId)) {
         wordStats.set(wordId, { correct: 0, incorrect: 0, total: 0 });
@@ -236,7 +236,7 @@ async function calculateStudyStreak(userId: string): Promise<number> {
     // 日付のみを抽出してユニークにする
     const uniqueDays = Array.from(
       new Set(
-        studyDays.map((item: any) => {
+        studyDays.map((item) => {
           const date = new Date(item.answeredAt);
           return date.toDateString();
         })

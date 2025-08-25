@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         wordId: validatedData.wordId,
         sessionId: validatedData.sessionId,
         isCorrect: validatedData.isCorrect,
-        userAnswer: validatedData.userAnswer,
+        userAnswer: validatedData.userAnswer ?? null,
       },
       include: {
         user: {

@@ -123,12 +123,14 @@ async function submitAnswerWithDatabase(
   }
 
   // 正解判定
-  const correctAnswers = word.answers.map((a: { answer: string; isPrimary: boolean }) => a.answer.toLowerCase());
+  const correctAnswers = word.answers.map((a: { answer: string; isPrimary: boolean }) =>
+    a.answer.toLowerCase()
+  );
   const userAnswerLower = userAnswer.toLowerCase().trim();
   const isCorrect = correctAnswers.includes(userAnswerLower);
 
   // トランザクション内で学習履歴保存とセッション更新を実行
-  const result = await db.$transaction(async (tx: any) => {
+  const result = await db.$transaction(async (tx) => {
     // 学習履歴を保存
     await tx.learningHistory.create({
       data: {
@@ -166,8 +168,9 @@ async function submitAnswerWithDatabase(
       isCorrect,
       correctAnswers: word.answers.map((a: { answer: string; isPrimary: boolean }) => a.answer),
       userAnswer: userAnswer.trim(),
-      japaneseMeaning: word.japaneseMeaning,
-      isSessionComplete: updatedSession.completedQuestions >= updatedSession.totalQuestions,
+      synonyms: [], // TODO: 類義語対応時に実装
+      completedQuestions: updatedSession.completedQuestions,
+      totalQuestions: updatedSession.totalQuestions,
     };
   });
 
