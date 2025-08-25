@@ -36,7 +36,8 @@ yarn-error.log*
 next-env.d.ts
 
 # prisma
-/prisma/migrations
+# マイグレーションファイルはコミット必須のため除外しない
+# /prisma/migrations
 
 # IDE
 .vscode
