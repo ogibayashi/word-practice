@@ -1,12 +1,22 @@
-import { createMockSession } from "@/lib/db/mockSession";
+import { sessionService } from "@/lib/services/sessionService";
 import type { ApiResponse, CreateSessionRequest, CreateSessionResponse } from "@/types/database";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+// 定数定義
+const MIN_QUESTIONS = 1;
+const MAX_QUESTIONS = 50;
+const DEFAULT_QUESTIONS = 10;
+
 // リクエストボディのバリデーション
 const CreateSessionSchema = z.object({
   userId: z.string().min(1, "ユーザーIDが必要です"),
-  totalQuestions: z.number().min(1).max(50).optional().default(10),
+  totalQuestions: z
+    .number()
+    .min(MIN_QUESTIONS)
+    .max(MAX_QUESTIONS)
+    .optional()
+    .default(DEFAULT_QUESTIONS),
 });
 
 export async function POST(request: NextRequest) {
@@ -16,10 +26,12 @@ export async function POST(request: NextRequest) {
     const validation = CreateSessionSchema.safeParse(body);
 
     if (!validation.success) {
+      // 全てのバリデーションエラーを含める
+      const errorMessages = validation.error.errors.map((err) => err.message).join(", ");
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: validation.error.errors[0]?.message || "無効なリクエストです",
+          error: `バリデーションエラー: ${errorMessages}`,
         },
         { status: 400 }
       );
@@ -27,9 +39,8 @@ export async function POST(request: NextRequest) {
 
     const { userId, totalQuestions } = validation.data;
 
-    // TODO: データベースが利用可能な場合はデータベース版を使用
-    // 現在はモック版を使用
-    const sessionResponse = createMockSession(userId, totalQuestions);
+    // サービス層でセッション作成（フォールバック機能付き）
+    const sessionResponse = await sessionService.createSession(userId, totalQuestions);
 
     return NextResponse.json<ApiResponse<CreateSessionResponse>>({
       success: true,

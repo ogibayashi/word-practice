@@ -1,4 +1,5 @@
 import type { QuestionData, WordStats, WordWithAnswers } from "@/types/database";
+import { Prisma } from "@prisma/client";
 import { prisma } from "./client";
 
 // ユーザー関連のクエリ
@@ -148,7 +149,8 @@ export const learningHistoryQueries = {
         incorrect_attempts: bigint;
         last_attempt_at: Date | null;
       }>
-    >`
+    >(
+      Prisma.sql`
 			SELECT 
 				w.id as word_id,
 				w.japanese_meaning,
@@ -164,7 +166,8 @@ export const learningHistoryQueries = {
 			)
 			GROUP BY w.id, w.japanese_meaning
 			ORDER BY last_attempt_at DESC
-		`;
+		`
+    );
 
     return stats.map((stat): WordStats => {
       const totalAttempts = Number(stat.total_attempts);

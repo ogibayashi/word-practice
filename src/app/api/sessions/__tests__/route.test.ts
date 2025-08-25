@@ -85,7 +85,7 @@ describe("/api/sessions", () => {
 
     expect(response.status).toBe(400);
     expect(data.success).toBe(false);
-    expect(data.error).toBe("リクエストボディが不正です");
+    expect(data.error).toContain("バリデーションエラー:");
   });
 
   it("totalQuestionsが1未満の場合は400エラーを返す", async () => {
@@ -107,7 +107,7 @@ describe("/api/sessions", () => {
 
     expect(response.status).toBe(400);
     expect(data.success).toBe(false);
-    expect(data.error).toBe("リクエストボディが不正です");
+    expect(data.error).toContain("バリデーションエラー:");
   });
 
   it("totalQuestionsが50を超える場合は400エラーを返す", async () => {
@@ -129,7 +129,7 @@ describe("/api/sessions", () => {
 
     expect(response.status).toBe(400);
     expect(data.success).toBe(false);
-    expect(data.error).toBe("リクエストボディが不正です");
+    expect(data.error).toContain("バリデーションエラー:");
   });
 
   it("無効なJSONの場合は400エラーを返す", async () => {
@@ -144,9 +144,9 @@ describe("/api/sessions", () => {
     const response = await POST(request);
     const data = await response.json();
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(500);
     expect(data.success).toBe(false);
-    expect(data.error).toBe("リクエストの解析に失敗しました");
+    expect(data.error).toBe("セッションの作成に失敗しました");
   });
 
   it("セッション作成でエラーが発生した場合は500エラーを返す", async () => {

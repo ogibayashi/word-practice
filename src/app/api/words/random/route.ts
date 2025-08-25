@@ -6,7 +6,8 @@ export async function GET(request: NextRequest) {
   try {
     // クエリパラメータから問題数を取得（デフォルト10問）
     const searchParams = request.nextUrl.searchParams;
-    const count = Number(searchParams.get("count")) || 10;
+    const countParam = searchParams.get("count");
+    const count = countParam ? Number(countParam) : 10;
 
     // 問題数の制限チェック
     if (count < 1 || count > 50) {
