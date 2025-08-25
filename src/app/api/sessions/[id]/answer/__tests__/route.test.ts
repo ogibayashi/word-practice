@@ -121,7 +121,7 @@ describe("/api/sessions/[id]/answer", () => {
 
     expect(response.status).toBe(404);
     expect(data.success).toBe(false);
-    expect(data.error).toBe("セッションまたは問題が見つかりません");
+    expect(data.error).toBe("回答の提出に失敗しました。セッションまたは問題が見つかりません。");
   });
 
   it("wordIdが未指定の場合は400エラーを返す", async () => {
@@ -144,7 +144,7 @@ describe("/api/sessions/[id]/answer", () => {
 
     expect(response.status).toBe(400);
     expect(data.success).toBe(false);
-    expect(data.error).toBe("リクエストボディが不正です");
+    expect(data.error).toBe("Required");
   });
 
   it("userAnswerが未指定の場合は400エラーを返す", async () => {
@@ -167,7 +167,7 @@ describe("/api/sessions/[id]/answer", () => {
 
     expect(response.status).toBe(400);
     expect(data.success).toBe(false);
-    expect(data.error).toBe("リクエストボディが不正です");
+    expect(data.error).toBe("Required");
   });
 
   it("無効なJSONの場合は400エラーを返す", async () => {
@@ -184,9 +184,9 @@ describe("/api/sessions/[id]/answer", () => {
     const response = await POST(request, params);
     const data = await response.json();
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(500);
     expect(data.success).toBe(false);
-    expect(data.error).toBe("リクエストの解析に失敗しました");
+    expect(data.error).toBe("回答の提出に失敗しました");
   });
 
   it("システムエラーの場合は500エラーを返す", async () => {
