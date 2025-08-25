@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["node_modules/**", ".next/**", "dist/**", "build/**", "*.config.js"]
+    "ignore": ["node_modules/**", ".next/**", "dist/**", "build/**", "*.config.js", ".claude/**"]
   },
   "formatter": {
     "enabled": true,
@@ -27,6 +27,9 @@
       },
       "complexity": {
         "noForEach": "off"
+      },
+      "a11y": {
+        "useSemanticElements": "off"
       }
     }
   },

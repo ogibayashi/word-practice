@@ -1,5 +1,8 @@
 "use client";
 
+import { AnswerResult } from "@/components/features/AnswerResult";
+import { ErrorDialog } from "@/components/features/ErrorDialog";
+import { SessionComplete } from "@/components/features/SessionComplete";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,12 +39,31 @@ interface Session {
   currentQuestionIndex: number;
 }
 
+interface AnswerResultData {
+  isCorrect: boolean;
+  userAnswer: string;
+  correctAnswers: string[];
+  japaneseMeaning: string;
+}
+
+interface ErrorData {
+  title: string;
+  message: string;
+  actionLabel?: string;
+}
+
 export default function LearnPage() {
   const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [answer, setAnswer] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showResult, setShowResult] = useState(false);
+  const [resultData, setResultData] = useState<AnswerResultData | null>(null);
+  const [showComplete, setShowComplete] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorData, setErrorData] = useState<ErrorData | null>(null);
+  const [correctCount, setCorrectCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -90,7 +112,12 @@ export default function LearnPage() {
       showCurrentQuestion(sessionData.questions, 0);
     } catch (error) {
       console.error("セッション初期化エラー:", error);
-      alert("学習セッションの開始に失敗しました");
+      setErrorData({
+        title: "エラー",
+        message: "学習セッションの開始に失敗しました",
+        actionLabel: "再試行",
+      });
+      setShowError(true);
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +125,7 @@ export default function LearnPage() {
 
   const showCurrentQuestion = (questions: Question[], index: number) => {
     if (index >= questions.length) {
-      alert("全ての問題が完了しました！");
+      setShowComplete(true);
       return;
     }
 
@@ -124,7 +151,7 @@ export default function LearnPage() {
 
     const nextIndex = session.currentQuestionIndex + 1;
     if (nextIndex >= session.questions.length) {
-      alert("全ての問題が完了しました！");
+      setShowComplete(true);
       return;
     }
 
@@ -167,18 +194,27 @@ export default function LearnPage() {
 
       const answerData = result.data;
 
-      // 結果を表示（今後結果画面に移行）
+      // 正解数をカウント
       if (answerData.isCorrect) {
-        alert(`正解！ 答え: ${answerData.correctAnswers.join(", ")}`);
-      } else {
-        alert(`不正解。正解: ${answerData.correctAnswers.join(", ")}`);
+        setCorrectCount((prev) => prev + 1);
       }
 
-      // 次の問題へ
-      moveToNextQuestion();
+      // 結果データを設定して結果画面を表示
+      setResultData({
+        isCorrect: answerData.isCorrect,
+        userAnswer: answer.trim(),
+        correctAnswers: answerData.correctAnswers,
+        japaneseMeaning: currentWord.japanese,
+      });
+      setShowResult(true);
     } catch (error) {
       console.error("回答送信エラー:", error);
-      alert("回答の送信に失敗しました");
+      setErrorData({
+        title: "エラー",
+        message: "回答の送信に失敗しました",
+        actionLabel: "再試行",
+      });
+      setShowError(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -187,6 +223,33 @@ export default function LearnPage() {
   const handleSkip = async () => {
     if (!currentWord || isSubmitting) return;
     moveToNextQuestion();
+  };
+
+  const handleResultNext = () => {
+    setShowResult(false);
+    setResultData(null);
+    moveToNextQuestion();
+  };
+
+  const handleRestartSession = () => {
+    setShowComplete(false);
+    setCorrectCount(0);
+    initializeSession();
+  };
+
+  const handleGoHome = () => {
+    router.push("/");
+  };
+
+  const handleErrorClose = () => {
+    setShowError(false);
+    setErrorData(null);
+  };
+
+  const handleErrorAction = () => {
+    setShowError(false);
+    setErrorData(null);
+    initializeSession();
   };
 
   if (isLoading) {
@@ -284,6 +347,41 @@ export default function LearnPage() {
           ホームに戻る
         </Button>
       </div>
+
+      {/* 回答結果モーダル */}
+      {showResult && resultData && (
+        <AnswerResult
+          isCorrect={resultData.isCorrect}
+          userAnswer={resultData.userAnswer}
+          correctAnswers={resultData.correctAnswers}
+          japaneseMeaning={resultData.japaneseMeaning}
+          onNext={handleResultNext}
+          isLastQuestion={
+            session ? session.currentQuestionIndex + 1 >= session.questions.length : false
+          }
+        />
+      )}
+
+      {/* セッション完了モーダル */}
+      {showComplete && session && (
+        <SessionComplete
+          totalQuestions={session.questions.length}
+          correctCount={correctCount}
+          onRestart={handleRestartSession}
+          onHome={handleGoHome}
+        />
+      )}
+
+      {/* エラーダイアログ */}
+      {showError && errorData && (
+        <ErrorDialog
+          title={errorData.title}
+          message={errorData.message}
+          onClose={handleErrorClose}
+          actionLabel={errorData.actionLabel}
+          onAction={errorData.actionLabel ? handleErrorAction : undefined}
+        />
+      )}
     </div>
   );
 }
