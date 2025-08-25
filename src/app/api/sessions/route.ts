@@ -9,10 +9,20 @@ import type {
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+// 定数定義
+const MIN_QUESTIONS = 1;
+const MAX_QUESTIONS = 50;
+const DEFAULT_QUESTIONS = 10;
+
 // リクエストボディのバリデーション
 const CreateSessionSchema = z.object({
   userId: z.string().min(1, "ユーザーIDが必要です"),
-  totalQuestions: z.number().min(1).max(50).optional().default(10),
+  totalQuestions: z
+    .number()
+    .min(MIN_QUESTIONS)
+    .max(MAX_QUESTIONS)
+    .optional()
+    .default(DEFAULT_QUESTIONS),
 });
 
 export async function POST(request: NextRequest) {
@@ -22,10 +32,12 @@ export async function POST(request: NextRequest) {
     const validation = CreateSessionSchema.safeParse(body);
 
     if (!validation.success) {
+      // 全てのバリデーションエラーを含める
+      const errorMessages = validation.error.errors.map((err) => err.message).join(", ");
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: validation.error.errors[0]?.message || "無効なリクエストです",
+          error: `バリデーションエラー: ${errorMessages}`,
         },
         { status: 400 }
       );
@@ -92,25 +104,27 @@ async function createSessionWithDatabase(
   });
 
   // 問題用の単語をランダムに取得
-  // PostgreSQL の RANDOM() 関数を使用してランダム順序で取得
-  const words = await db.$queryRaw<
-    Array<{
-      id: string;
-      japaneseMeaning: string;
-      synonyms: string[];
-    }>
-  >`
-    SELECT id, japanese_meaning as "japaneseMeaning", synonyms
-    FROM words 
-    ORDER BY RANDOM() 
-    LIMIT ${totalQuestions}
-  `;
+  // より安全な方法でPrismaのfindManyを使用してランダム取得
+  // まず全単語数を取得
+  const wordCount = await db.word.count();
 
-  if (words.length < totalQuestions) {
+  if (wordCount < totalQuestions) {
     throw new Error(
-      `必要な単語数が不足しています（必要: ${totalQuestions}, 利用可能: ${words.length}）`
+      `必要な単語数が不足しています（必要: ${totalQuestions}, 利用可能: ${wordCount}）`
     );
   }
+
+  // ランダムなオフセットを生成してランダム取得
+  const randomOffset = Math.floor(Math.random() * Math.max(1, wordCount - totalQuestions + 1));
+  const words = await db.word.findMany({
+    skip: randomOffset,
+    take: totalQuestions,
+    select: {
+      id: true,
+      japaneseMeaning: true,
+      synonyms: true,
+    },
+  });
 
   // 単語IDを使って答えを取得
   const wordIds = words.map((w) => w.id);
