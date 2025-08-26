@@ -27,9 +27,11 @@ export default function HomePage() {
               <Button asChild size="lg">
                 <Link href="/learn">学習を開始</Link>
               </Button>
+              {/* 統計ページは フェーズ2 で実装予定
               <Button asChild variant="outline" size="lg">
-                <Link href={"/stats" as any}>統計を見る</Link>
+                <Link href="/stats">統計を見る</Link>
               </Button>
+              */}
             </>
           ) : (
             <>
