@@ -44,8 +44,42 @@ export function useAuth(): UseAuthReturn {
         };
       }
 
-      // ユーザー情報を保存
-      const newUser = saveUserToStorage(displayName);
+      // APIエンドポイント経由でデータベースにユーザーを作成
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          displayName: displayName.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("ログインAPIの呼び出しに失敗しました");
+      }
+
+      const result = await response.json();
+
+      if (!result.success || !result.data) {
+        throw new Error(result.error || "ログインに失敗しました");
+      }
+
+      // APIから返されたユーザー情報をローカルストレージに保存
+      const userData = result.data.user;
+      const newUser: LocalUser = {
+        id: userData.id,
+        displayName: userData.displayName,
+        createdAt: userData.createdAt,
+      };
+
+      // ローカルストレージに保存
+      try {
+        localStorage.setItem("word-practice-user", JSON.stringify(newUser));
+      } catch (storageError) {
+        console.error("Failed to save user to localStorage:", storageError);
+      }
+
       setUser(newUser);
       setIsLoading(false);
 
