@@ -103,6 +103,7 @@ src/
 - `docs/design.md` - 技術設計・アーキテクチャ
 - `docs/implementation.md` - 実装計画・決定事項
 - `docs/current-status.md` - 現在の進捗状況
+- `docs/architecture.md` - ソフトウェアアーキテクチャ
 
 ## 次回作業予定
 
