@@ -23,12 +23,14 @@ export function Header() {
               >
                 学習
               </Link>
+              {/* 統計ページは フェーズ2 で実装予定
               <Link
-                href={"/stats" as any}
+                href="/stats"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground"
               >
                 統計
               </Link>
+              */}
             </>
           )}
 

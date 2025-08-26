@@ -15,7 +15,7 @@ export function AuthGuard({ children, redirectTo = "/login" }: PropsWithChildren
 
   useEffect(() => {
     if (!isLoading && !isLoggedIn) {
-      router.push(redirectTo as any);
+      router.push(redirectTo as never);
     }
   }, [isLoggedIn, isLoading, router, redirectTo]);
 

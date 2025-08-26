@@ -5,7 +5,10 @@ import { z } from "zod";
 
 // リクエストボディのバリデーション
 const LoginSchema = z.object({
-  displayName: z.string().min(1, "名前を入力してください").max(50, "名前は50文字以内で入力してください"),
+  displayName: z
+    .string()
+    .min(1, "名前を入力してください")
+    .max(50, "名前は50文字以内で入力してください"),
 });
 
 // レスポンスの型定義
@@ -55,7 +58,7 @@ export async function POST(request: NextRequest) {
       });
     } catch (dbError) {
       console.error("データベースエラー:", dbError);
-      
+
       // データベース接続エラーの場合、ローカルIDを生成して返す（フォールバック）
       const fallbackUser = {
         id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
