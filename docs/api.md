@@ -36,7 +36,7 @@ curl -X POST /api/admin/words \
 {
   "japanese_meaning": "走る",
   "answers": ["run", "jog", "sprint"],
-  "synonyms": ["ジョギング", "疾走"] // オプション
+  "synonyms": ["ジョギング", "疾走"]
 }
 ```
 
@@ -184,7 +184,8 @@ GET /api/admin/words?search=走&is_active=all&limit=10&offset=0
       "total": 150,
       "limit": 10,
       "offset": 0,
-      "has_next": true
+      "has_next": true,
+      "total_pages": 15
     }
   }
 }
@@ -200,9 +201,15 @@ GET /api/admin/words?search=走&is_active=all&limit=10&offset=0
 ALTER TABLE words ADD COLUMN is_active BOOLEAN DEFAULT true;
 ALTER TABLE words ADD COLUMN deleted_at TIMESTAMP NULL;
 
--- インデックス追加
+-- インデックス追加（パフォーマンス最適化）
 CREATE INDEX idx_words_is_active ON words(is_active);
 CREATE INDEX idx_words_japanese_meaning ON words(japanese_meaning);
+
+-- 複合インデックス（検索とフィルタリングの最適化）
+CREATE INDEX idx_words_active_meaning ON words(is_active, japanese_meaning);
+
+-- 将来の拡張: 全文検索用インデックス（実装時に追加）
+-- CREATE INDEX idx_words_fulltext ON words USING gin(to_tsvector('japanese', japanese_meaning));
 ```
 
 ### Prismaスキーマ更新
@@ -290,10 +297,44 @@ await prisma.$transaction(async (tx) => {
 - 統計情報は削除済み単語も含めて計算（学習実績の保持）
 
 ### セキュリティ考慮事項
-- APIキーの環境変数管理
-- SQLインジェクション対策（Prisma ORM使用）
-- レート制限（将来的に実装）
-- 入力値のサニタイゼーション
+
+#### 認証・認可
+- **APIキーの環境変数管理**: `ADMIN_API_KEY`を環境変数で管理
+- **APIキーローテーション**: 定期的なキー更新の仕組み（将来実装予定）
+- **複数APIキー対応**: 個別アクセス管理と監査ログ（将来実装予定）
+- **レート制限**: APIの過剰利用防止（将来実装予定）
+
+#### データ保護
+- **SQLインジェクション対策**: Prisma ORMのパラメータ化クエリを使用
+- **XSS対策**:
+  - HTMLタグのエスケープ処理
+  - 入力値のホワイトリスト検証
+- **入力サニタイゼーション**:
+  - 制御文字の除去
+  - 最大長制限の強制
+  - 特殊文字の適切なエスケープ
+
+### パフォーマンス最適化
+
+#### データベースクエリ最適化
+- **インデックス戦略**:
+  - 単一カラムインデックス: `is_active`, `japanese_meaning`
+  - 複合インデックス: `(is_active, japanese_meaning)` で検索とフィルタリングを高速化
+  - 将来の拡張: PostgreSQLの全文検索（GINインデックス）で部分一致検索を最適化
+- **ページネーション**:
+  - OFFSET/LIMIT方式を使用（初期実装）
+  - 大規模データ時はカーソルベースページネーションへの移行を検討
+- **N+1問題の回避**:
+  - Prismaの`include`を使用して単語と正解候補を一括取得
+
+#### 回答管理の最適化
+- **現在の実装**: 全置換方式（シンプルさと整合性を優先）
+- **将来の最適化**: 差分更新アルゴリズムの導入（大量データ時）
+  - 追加・削除・変更を個別に検出して最小限の操作で更新
+
+#### キャッシュ戦略（将来実装）
+- 頻繁にアクセスされる単語データのメモリキャッシュ
+- Redis等を使用した分散キャッシュ
 
 ## テスト方針
 
