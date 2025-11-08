@@ -60,7 +60,7 @@ describe("PUT /api/admin/words/:id", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const response = await PUT(request, { params: { id: wordId } });
+    const response = await PUT(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -94,7 +94,7 @@ describe("PUT /api/admin/words/:id", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const response = await PUT(request, { params: { id: wordId } });
+    const response = await PUT(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -113,7 +113,7 @@ describe("PUT /api/admin/words/:id", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const response = await PUT(request, { params: { id: wordId } });
+    const response = await PUT(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -139,7 +139,7 @@ describe("PUT /api/admin/words/:id", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const response = await PUT(request, { params: { id: wordId } });
+    const response = await PUT(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(404);
@@ -165,7 +165,7 @@ describe("PUT /api/admin/words/:id", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const response = await PUT(request, { params: { id: wordId } });
+    const response = await PUT(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(409);
@@ -191,7 +191,7 @@ describe("PUT /api/admin/words/:id", () => {
       body: JSON.stringify(requestBody),
     });
 
-    const response = await PUT(request, { params: { id: wordId } });
+    const response = await PUT(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -230,7 +230,7 @@ describe("DELETE /api/admin/words/:id", () => {
       },
     });
 
-    const response = await DELETE(request, { params: { id: wordId } });
+    const response = await DELETE(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -251,7 +251,7 @@ describe("DELETE /api/admin/words/:id", () => {
       },
     });
 
-    const response = await DELETE(request, { params: { id: wordId } });
+    const response = await DELETE(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(404);
@@ -271,7 +271,7 @@ describe("DELETE /api/admin/words/:id", () => {
       },
     });
 
-    const response = await DELETE(request, { params: { id: wordId } });
+    const response = await DELETE(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -289,7 +289,7 @@ describe("DELETE /api/admin/words/:id", () => {
       },
     });
 
-    const response = await DELETE(request, { params: { id: wordId } });
+    const response = await DELETE(request, { params: Promise.resolve({ id: wordId }) });
     const data = await response.json();
 
     expect(response.status).toBe(500);

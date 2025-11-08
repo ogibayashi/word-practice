@@ -33,13 +33,13 @@ const UpdateWordSchema = z.object({
 /**
  * PUT /api/admin/words/:id - 単語更新API
  */
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // APIキー認証
   const authError = validateApiKey(request);
   if (authError) return authError;
 
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // リクエストボディを解析
     const body = await request.json();
@@ -157,13 +157,16 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 /**
  * DELETE /api/admin/words/:id - 単語削除API（ソフトデリート）
  */
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   // APIキー認証
   const authError = validateApiKey(request);
   if (authError) return authError;
 
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // 単語を削除（ソフトデリート）
     const deletedWord = await wordManagementService.deleteWord(id);
