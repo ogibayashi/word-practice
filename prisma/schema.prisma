@@ -29,11 +29,13 @@ model User {
 
 // 単語マスタ
 model Word {
-  id              String  @id @default(cuid())
-  japaneseMeaning String  @map("japanese_meaning") @db.Text
-  synonyms        String[] // 類義語リスト
-  difficultyLevel Int     @default(1) @map("difficulty_level") // 難易度（将来拡張用）
-  createdAt       DateTime @default(now()) @map("created_at")
+  id              String    @id @default(cuid())
+  japaneseMeaning String    @map("japanese_meaning") @db.Text
+  synonyms        String[]  // 類義語リスト
+  difficultyLevel Int       @default(1) @map("difficulty_level") // 難易度（将来拡張用）
+  isActive        Boolean   @default(true) @map("is_active") // アクティブ状態（ソフトデリート用）
+  createdAt       DateTime  @default(now()) @map("created_at")
+  deletedAt       DateTime? @map("deleted_at") // 削除日時（ソフトデリート用）
 
   // リレーション
   answers         WordAnswer[]
