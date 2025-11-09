@@ -36,6 +36,9 @@ export const wordQueries = {
   // ランダムに単語を取得（シンプル版、後で出題アルゴリズムに置き換え）
   async getRandomWords(limit = 10): Promise<QuestionData[]> {
     const words = await prisma.word.findMany({
+      where: {
+        isActive: true, // アクティブな単語のみ取得
+      },
       take: limit,
       include: {
         answers: true,

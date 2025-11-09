@@ -115,9 +115,42 @@ NEXTAUTH_SECRET=your-production-secret-32-characters-or-more
 LINE_CHANNEL_ID=your-line-channel-id
 LINE_CHANNEL_SECRET=your-line-channel-secret
 
+# 管理API認証（単語管理API用）
+ADMIN_API_KEY=your-admin-api-key-for-word-management
+
 # 本番環境フラグ
 NODE_ENV=production
 ```
+
+#### 環境変数の説明
+
+- **DATABASE_URL**: Neon PostgreSQLの接続URL
+- **NEXTAUTH_URL**: アプリケーションのベースURL（Vercelのドメイン）
+- **NEXTAUTH_SECRET**: NextAuth.jsのセッション暗号化キー（32文字以上のランダム文字列）
+- **LINE_CHANNEL_ID**: LINE LoginのチャネルID
+- **LINE_CHANNEL_SECRET**: LINE Loginのチャネルシークレット
+- **ADMIN_API_KEY**: 単語管理API（POST/PUT/DELETE /api/admin/words）の認証キー
+  - 安全な方法で生成（例: `openssl rand -base64 32`）
+  - 外部に漏洩しないよう厳重に管理
+  - CSVインポート機能など管理者向け操作で使用
+- **NODE_ENV**: 本番環境フラグ
+
+#### セキュリティに関する注意事項
+
+1. **ADMIN_API_KEY の生成**:
+   ```bash
+   # ターミナルで実行
+   openssl rand -base64 32
+   ```
+
+2. **環境変数の管理**:
+   - すべての機密情報はVercelの環境変数として設定
+   - `.env`ファイルは絶対にGitにコミットしない
+   - 定期的にキーをローテーション（特にADMIN_API_KEY）
+
+3. **アクセス制御**:
+   - ADMIN_API_KEYは管理者のみが知るべき情報
+   - APIキーは安全な方法で共有（パスワードマネージャー等）
 
 ### 3.3 ビルド設定
 
@@ -252,6 +285,8 @@ https://your-app-domain.com/api/auth/callback/line
 - [ ] データベース接続が成功する
 - [ ] LINE Loginが動作する
 - [ ] 学習機能が正常動作する
+- [ ] 管理API（単語管理）が認証付きで動作する
+- [ ] ADMIN_API_KEY が正しく設定されている
 - [ ] レスポンス時間が適切である
 - [ ] SSL証明書が有効である
 - [ ] SEOメタタグが設定されている
