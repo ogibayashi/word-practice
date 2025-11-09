@@ -351,19 +351,114 @@ await prisma.$transaction(async (tx) => {
 
 ## 今後の拡張性
 
-### バッチ処理機能（将来）
+### 5. 単語一括追加 API（バッチ処理）
+
+**エンドポイント**: `POST /api/admin/words/batch`
+
+#### リクエスト仕様
 ```json
-POST /api/admin/words/batch
 {
-  "operation": "create", // create/update/delete
   "words": [
     {
       "japanese_meaning": "走る",
-      "answers": ["run", "jog"]
+      "answers": ["run", "jog", "sprint"],
+      "synonyms": ["ジョギング", "疾走"]
+    },
+    {
+      "japanese_meaning": "美しい",
+      "answers": ["beautiful", "pretty", "gorgeous"],
+      "synonyms": ["きれい", "素敵"]
     }
   ]
 }
 ```
+
+#### バリデーション
+- `words`: 必須、配列（1-100個）
+- 各単語は単語追加APIと同じバリデーションルールに従う
+
+#### レスポンス仕様（全件成功時）
+```json
+{
+  "success": true,
+  "data": {
+    "created": 2,
+    "failed": 0,
+    "errors": []
+  }
+}
+```
+**HTTPステータス**: 201 Created
+
+#### レスポンス仕様（部分失敗時）
+```json
+{
+  "success": true,
+  "data": {
+    "created": 1,
+    "failed": 1,
+    "errors": [
+      {
+        "index": 1,
+        "japanese_meaning": "美しい",
+        "error": "この日本語の意味は既に登録されています"
+      }
+    ]
+  }
+}
+```
+**HTTPステータス**: 207 Multi-Status
+
+#### レスポンス仕様（全件失敗時）
+```json
+{
+  "success": true,
+  "data": {
+    "created": 0,
+    "failed": 2,
+    "errors": [
+      {
+        "index": 0,
+        "japanese_meaning": "走る",
+        "error": "この日本語の意味は既に登録されています"
+      },
+      {
+        "index": 1,
+        "japanese_meaning": "美しい",
+        "error": "この日本語の意味は既に登録されています"
+      }
+    ]
+  }
+}
+```
+**HTTPステータス**: 400 Bad Request
+
+#### トランザクション動作
+- **全件成功 or 全件失敗**: トランザクション内で処理されるため、エラーが1件でもある場合は全てロールバックされます
+- エラーが発生した場合、各単語のエラー詳細（インデックス、日本語の意味、エラーメッセージ）が返されます
+
+#### CSV インポート
+CSVファイルから単語データを一括インポートする場合、以下の形式を使用します:
+
+**CSV形式**:
+```csv
+japanese_meaning,primary_answer,alternative_answers,synonyms
+走る,run,"jog,sprint","ジョギング,疾走"
+美しい,beautiful,"pretty,gorgeous","きれい,素敵"
+```
+
+**フィールド説明**:
+- `japanese_meaning`: 日本語の意味（必須）
+- `primary_answer`: 主要な正解候補（必須）
+- `alternative_answers`: 代替正解候補（オプション、カンマ区切り）
+- `synonyms`: 類義語（オプション、カンマ区切り）
+
+**使用方法**:
+1. CSVファイルを用意
+2. CSVパーサーを使用してJSON形式に変換
+3. `/api/admin/words/batch` エンドポイントにPOST
+
+詳細は `src/lib/utils/csvParser.ts` を参照してください。
 
 ### カテゴリ機能（将来）
 - 単語カテゴリの追加
