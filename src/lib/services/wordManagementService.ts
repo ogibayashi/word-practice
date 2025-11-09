@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db/client";
 import {
   AdminErrorCode,
+  type BatchWordError,
   type CreateWordRequest,
   type DeleteWordResponse,
   type PaginationInfo,
@@ -252,6 +253,95 @@ class WordManagementService {
     };
 
     return { words: wordList, pagination };
+  }
+
+  /**
+   * 単語を一括作成（バッチ処理）
+   * @throws Error トランザクション全体が失敗した場合
+   * @returns 作成成功件数、失敗件数、エラー詳細
+   */
+  async batchCreateWords(
+    words: CreateWordRequest[]
+  ): Promise<{ created: number; failed: number; errors: BatchWordError[] }> {
+    const errors: BatchWordError[] = [];
+    let created = 0;
+
+    try {
+      // トランザクション内で全件処理（全件成功 or 全件失敗）
+      await prisma.$transaction(async (tx) => {
+        for (let i = 0; i < words.length; i++) {
+          const wordData = words[i];
+          if (!wordData) continue;
+
+          try {
+            // 重複チェック
+            const existingWord = await tx.word.findFirst({
+              where: {
+                japaneseMeaning: wordData.japanese_meaning,
+                isActive: true,
+              },
+            });
+
+            if (existingWord) {
+              errors.push({
+                index: i,
+                japanese_meaning: wordData.japanese_meaning,
+                error: "この日本語の意味は既に登録されています",
+              });
+              continue;
+            }
+
+            // 単語を作成
+            const word = await tx.word.create({
+              data: {
+                japaneseMeaning: wordData.japanese_meaning,
+                synonyms: wordData.synonyms || [],
+              },
+            });
+
+            // 正解候補を作成
+            await Promise.all(
+              wordData.answers.map((answer, index) =>
+                tx.wordAnswer.create({
+                  data: {
+                    wordId: word.id,
+                    answer,
+                    isPrimary: index === 0,
+                  },
+                })
+              )
+            );
+
+            created++;
+          } catch (error) {
+            // 個別エラーを記録
+            errors.push({
+              index: i,
+              japanese_meaning: wordData.japanese_meaning,
+              error: error instanceof Error ? error.message : "不明なエラー",
+            });
+          }
+        }
+
+        // エラーがある場合はロールバック
+        if (errors.length > 0) {
+          throw new Error("バッチ処理中にエラーが発生しました");
+        }
+      });
+
+      return {
+        created,
+        failed: 0,
+        errors: [],
+      };
+    } catch (error) {
+      // トランザクション全体が失敗
+      return {
+        created: 0,
+        failed: words.length,
+        errors,
+      };
+    }
   }
 
   /**
