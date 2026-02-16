@@ -106,3 +106,25 @@ export const AdminErrorCode = {
 } as const;
 
 export type AdminErrorCodeType = (typeof AdminErrorCode)[keyof typeof AdminErrorCode];
+
+// バッチ作成リクエスト
+export interface BatchCreateWordRequest {
+  words: CreateWordRequest[];
+}
+
+// バッチ作成時の個別エラー情報
+export interface BatchWordError {
+  index: number;
+  japanese_meaning: string;
+  error: string;
+}
+
+// バッチ作成レスポンス（アトミック: 全件成功 or 全件失敗）
+export interface BatchCreateWordResponse {
+  success: boolean;
+  data: {
+    created: number;
+    failed: number;
+    errors: BatchWordError[];
+  };
+}
