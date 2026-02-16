@@ -119,9 +119,9 @@ export interface BatchWordError {
   error: string;
 }
 
-// バッチ作成レスポンス
+// バッチ作成レスポンス（アトミック: 全件成功 or 全件失敗）
 export interface BatchCreateWordResponse {
-  success: true;
+  success: boolean;
   data: {
     created: number;
     failed: number;

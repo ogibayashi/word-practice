@@ -71,28 +71,17 @@ export async function POST(request: NextRequest) {
     }));
     const result = await wordManagementService.batchCreateWords(wordsData);
 
-    // 部分的な失敗の場合は207 Multi-Status、全件失敗の場合は400を返す
-    if (result.failed === validation.data.words.length) {
+    // アトミック処理: 全件成功(201) or 全件失敗(400)
+    if (result.failed > 0) {
       return NextResponse.json<BatchCreateWordResponse>(
         {
-          success: true,
+          success: false,
           data: result,
         },
         { status: 400 }
       );
     }
 
-    if (result.failed > 0) {
-      return NextResponse.json<BatchCreateWordResponse>(
-        {
-          success: true,
-          data: result,
-        },
-        { status: 207 } // Multi-Status
-      );
-    }
-
-    // 全件成功の場合は201
     return NextResponse.json<BatchCreateWordResponse>(
       {
         success: true,

@@ -71,52 +71,7 @@ describe("POST /api/admin/words/batch", () => {
     expect(mockWordManagementService.batchCreateWords).toHaveBeenCalledWith(requestBody.words);
   });
 
-  it("部分的な失敗の場合は207 Multi-Statusを返す", async () => {
-    const mockResponse = {
-      created: 1,
-      failed: 1,
-      errors: [
-        {
-          index: 1,
-          japanese_meaning: "美しい",
-          error: "この日本語の意味は既に登録されています",
-        },
-      ],
-    };
-
-    mockWordManagementService.batchCreateWords.mockResolvedValue(mockResponse);
-
-    const requestBody = {
-      words: [
-        {
-          japanese_meaning: "走る",
-          answers: ["run"],
-        },
-        {
-          japanese_meaning: "美しい",
-          answers: ["beautiful"],
-        },
-      ],
-    };
-
-    const request = new NextRequest("http://localhost:3000/api/admin/words/batch", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${validApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    const response = await POST(request);
-    const data = await response.json();
-
-    expect(response.status).toBe(207);
-    expect(data.success).toBe(true);
-    expect(data.data).toEqual(mockResponse);
-  });
-
-  it("全件失敗の場合は400を返す", async () => {
+  it("エラーがある場合は全件ロールバックして400を返す（アトミック処理）", async () => {
     const mockResponse = {
       created: 0,
       failed: 2,
@@ -162,7 +117,7 @@ describe("POST /api/admin/words/batch", () => {
     const data = await response.json();
 
     expect(response.status).toBe(400);
-    expect(data.success).toBe(true);
+    expect(data.success).toBe(false);
     expect(data.data).toEqual(mockResponse);
   });
 
