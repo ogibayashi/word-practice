@@ -32,9 +32,9 @@
 - 技術設計 (`design.md`)
 - 実装計画 (`implementation.md`)
 
-## 最新の進捗状況 (2024年8月25日更新)
+## 最新の進捗状況 (2026年2月17日更新)
 
-### ✅ 完了したタスク (17/26ステップ)
+### ✅ 完了したタスク (19/26ステップ)
 
 **フェーズ1-5: データ基盤・UI・API完成**
 1. **Prisma設定ファイル作成とスキーマ定義** - 完了 ✅
@@ -108,8 +108,15 @@
 
 ### 🔧 品質・保守性向上 (並行実施)
 21. コンポーネント単体テスト作成
-22. エンドツーエンド(E2E)テスト作成
+22. ✅ エンドツーエンド(E2E)テスト基盤構築 - Playwright導入 (2026-05-31)
 23. 型チェックとリンター実行・エラー修正
+
+### 🧪 E2Eテスト構成 (Playwright)
+- **テスト配置**: `e2e/*.spec.ts`
+- **対象環境**: ローカルは `pnpm dev` を webServer で自動起動 / CI は GitHub Actions 上の PostgreSQL service container を使用
+- **DB戦略**: `prisma migrate deploy` → `pnpm db:seed` でクリーンな状態を毎回構築
+- **コマンド**: `pnpm e2e` (CI), `pnpm e2e:ui` (ローカルUIモード), `pnpm e2e:install` (ブラウザ初回セットアップ)
+- **失敗時アーティファクト**: playwright-report と test-results を GitHub Actions にアップロード
 
 ## 技術環境・コマンド
 
