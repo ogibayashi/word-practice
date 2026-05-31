@@ -23,18 +23,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
-      
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Generate Prisma client
         run: pnpm prisma generate
-      
+
       - name: Run linter
         run: pnpm lint
-      
+
       - name: Run type check
         run: pnpm type-check
   
@@ -55,15 +55,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
-      
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Generate Prisma client
         run: pnpm prisma generate
-      
+
       - name: Build application
         run: pnpm build
         env:
@@ -86,15 +86,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
-      
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Generate Prisma client
         run: pnpm prisma generate
-      
+
       # テスト環境がセットアップされたら有効化
       # - name: Run unit tests
       #   run: pnpm test
