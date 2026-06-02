@@ -34,6 +34,10 @@ const JAPANESE_TO_ENGLISH: Record<string, string> = {
   愛: "love",
 };
 
+function uniqueDisplayName() {
+  return `e2e${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
+}
+
 async function login(page: import("@playwright/test").Page, displayName: string) {
   await page.goto("/login");
   await page.getByPlaceholder("お名前").fill(displayName);
@@ -50,7 +54,7 @@ async function readQuestion(page: import("@playwright/test").Page) {
 
 test.describe("学習フロー", () => {
   test("ログインから出題、正解までの一連の流れ", async ({ page }) => {
-    await login(page, `e2e${Date.now()}`);
+    await login(page, uniqueDisplayName());
 
     const meaning = await readQuestion(page);
     const correct = JAPANESE_TO_ENGLISH[meaning];
@@ -68,7 +72,7 @@ test.describe("学習フロー", () => {
   });
 
   test("不正解時に正解が表示される", async ({ page }) => {
-    await login(page, `e2e${Date.now()}`);
+    await login(page, uniqueDisplayName());
 
     await readQuestion(page);
 
