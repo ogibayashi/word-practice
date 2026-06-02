@@ -1,7 +1,7 @@
 import type { LearningHistory, Session, User, Word, WordAnswer } from "@prisma/client";
 
 // 基本的な型定義をエクスポート
-export type { User, Word, WordAnswer, Session, LearningHistory };
+export type { LearningHistory, Session, User, Word, WordAnswer };
 
 // 拡張型定義
 export type WordWithAnswers = Word & {

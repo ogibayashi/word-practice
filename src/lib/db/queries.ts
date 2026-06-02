@@ -1,5 +1,5 @@
-import type { QuestionData, WordStats, WordWithAnswers } from "@/types/database";
 import { Prisma } from "@prisma/client";
+import type { QuestionData, WordStats, WordWithAnswers } from "@/types/database";
 import { prisma } from "./client";
 
 // ユーザー関連のクエリ

@@ -99,7 +99,7 @@ describe("mockData utilities", () => {
 
   describe("mockWords data integrity", () => {
     it("全ての単語が必要なプロパティを持つ", () => {
-      mockWords.forEach((word, index) => {
+      mockWords.forEach((word, _index) => {
         expect(word.id).toBeDefined();
         expect(word.japaneseMeaning).toBeDefined();
         expect(word.answers).toBeDefined();

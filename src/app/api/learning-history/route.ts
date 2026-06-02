@@ -1,6 +1,6 @@
-import { prisma as db } from "@/lib/db/client";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { prisma as db } from "@/lib/db/client";
 
 // 学習履歴保存用のバリデーションスキーマ
 const CreateLearningHistorySchema = z.object({

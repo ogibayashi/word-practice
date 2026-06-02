@@ -1,14 +1,13 @@
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { validateApiKey } from "@/lib/middleware/apiKeyAuth";
 import { wordManagementService } from "@/lib/services/wordManagementService";
 import {
   AdminErrorCode,
   type AdminErrorResponse,
-  type CreateWordRequest,
   type CreateWordResponse,
   type SearchWordsResponse,
 } from "@/types/admin";
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 
 // バリデーションスキーマ
 const CreateWordSchema = z.object({

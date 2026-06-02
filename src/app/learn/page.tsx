@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { AnswerResult } from "@/components/features/AnswerResult";
 import { ErrorDialog } from "@/components/features/ErrorDialog";
 import { SessionComplete } from "@/components/features/SessionComplete";
@@ -14,9 +16,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { getUserFromStorage } from "@/lib/auth/localStorage";
-import type { CreateSessionResponse } from "@/types/database";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 // 学習ページで使用する型定義
 interface Word {
@@ -66,6 +65,7 @@ export default function LearnPage() {
   const [correctCount, setCorrectCount] = useState(0);
   const router = useRouter();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: initializeSession should only run on mount
   useEffect(() => {
     const user = getUserFromStorage();
     if (!user) {

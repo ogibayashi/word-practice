@@ -1,8 +1,8 @@
-import { prisma as db } from "@/lib/db/client";
-import { submitMockAnswer } from "@/lib/db/mockSession";
-import type { ApiResponse, SubmitAnswerRequest, SubmitAnswerResponse } from "@/types/database";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { prisma as db } from "@/lib/db/client";
+import { submitMockAnswer } from "@/lib/db/mockSession";
+import type { ApiResponse, SubmitAnswerResponse } from "@/types/database";
 
 // リクエストボディのバリデーション
 const SubmitAnswerSchema = z.object({
