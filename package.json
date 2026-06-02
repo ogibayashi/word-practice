@@ -14,6 +14,9 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:api": "jest --testPathPattern=api",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:install": "playwright install --with-deps chromium",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset && pnpm db:seed"
   },
@@ -35,6 +38,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
