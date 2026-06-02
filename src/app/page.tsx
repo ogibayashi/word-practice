@@ -1,10 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import Link from "next/link";
 
 export default function HomePage() {
   const { isLoggedIn, user } = useAuth();

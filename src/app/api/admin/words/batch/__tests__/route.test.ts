@@ -8,9 +8,9 @@ jest.mock("@/lib/middleware/apiKeyAuth", () => ({
   validateApiKey: jest.fn(() => null), // デフォルトは認証成功
 }));
 
+import { NextRequest } from "next/server";
 import { wordManagementService } from "@/lib/services/wordManagementService";
 import { AdminErrorCode } from "@/types/admin";
-import { NextRequest } from "next/server";
 import { POST } from "../route";
 
 const mockWordManagementService = wordManagementService as jest.Mocked<

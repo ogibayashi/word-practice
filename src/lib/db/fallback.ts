@@ -2,7 +2,7 @@
 
 import type { QuestionData } from "@/types/database";
 import { prisma } from "./client";
-import { checkMockAnswer, getMockWordById, getRandomMockWords } from "./mockData";
+import { getMockWordById, getRandomMockWords } from "./mockData";
 import { wordQueries } from "./queries";
 
 // データベース接続をチェック

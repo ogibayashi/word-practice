@@ -1,3 +1,4 @@
+import type { Word, WordAnswer } from "@prisma/client";
 import { prisma } from "@/lib/db/client";
 import {
   AdminErrorCode,
@@ -9,7 +10,6 @@ import {
   type WordDetailResponse,
   type WordListItem,
 } from "@/types/admin";
-import type { Word, WordAnswer } from "@prisma/client";
 
 /**
  * 単語管理サービス
@@ -334,7 +334,7 @@ class WordManagementService {
         failed: 0,
         errors: [],
       };
-    } catch (error) {
+    } catch (_error) {
       // トランザクション全体が失敗
       return {
         created: 0,

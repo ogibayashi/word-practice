@@ -1,8 +1,8 @@
+import { type NextRequest, NextResponse } from "next/server";
 import { getMockSessionStats } from "@/lib/db/mockSession";
 import type { ApiResponse } from "@/types/database";
-import { type NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 

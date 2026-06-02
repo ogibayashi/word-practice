@@ -1,6 +1,6 @@
-import { prisma as db } from "@/lib/db/client";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { prisma as db } from "@/lib/db/client";
 
 // パラメータの型定義
 interface RouteParams {
@@ -13,7 +13,7 @@ const UserIdSchema = z.string().min(1, "ユーザーIDが必要です");
  * GET /api/users/[userId]/stats
  * ユーザーの学習統計情報を取得する
  */
-export async function GET(request: NextRequest, context: { params: Promise<RouteParams> }) {
+export async function GET(_request: NextRequest, context: { params: Promise<RouteParams> }) {
   try {
     const params = await context.params;
     const userId = UserIdSchema.parse(params.userId);

@@ -1,7 +1,7 @@
-import { checkAnswerWithFallback } from "@/lib/db/fallback";
-import type { ApiResponse } from "@/types/database";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { checkAnswerWithFallback } from "@/lib/db/fallback";
+import type { ApiResponse } from "@/types/database";
 
 // リクエストボディのバリデーション
 const CheckAnswerSchema = z.object({

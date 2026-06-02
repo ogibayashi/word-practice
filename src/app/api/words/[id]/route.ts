@@ -1,8 +1,8 @@
+import { type NextRequest, NextResponse } from "next/server";
 import { getWordByIdWithFallback } from "@/lib/db/fallback";
 import type { ApiResponse, QuestionData } from "@/types/database";
-import { type NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 

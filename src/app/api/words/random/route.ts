@@ -1,6 +1,6 @@
+import { type NextRequest, NextResponse } from "next/server";
 import { getWordsWithFallback } from "@/lib/db/fallback";
 import type { ApiResponse, QuestionData } from "@/types/database";
-import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {

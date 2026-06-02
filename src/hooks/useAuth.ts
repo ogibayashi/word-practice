@@ -1,14 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { LocalUser } from "@/lib/auth/localStorage";
 import {
   clearUserFromStorage,
   getUserFromStorage,
-  isUserLoggedIn,
-  saveUserToStorage,
   validateDisplayName,
 } from "@/lib/auth/localStorage";
-import { useEffect, useState } from "react";
 
 export interface UseAuthReturn {
   user: LocalUser | null;
